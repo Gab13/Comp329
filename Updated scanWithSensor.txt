@@ -1,0 +1,137 @@
+	// Scan with ultrasonic sensor
+	public static void scanWithSensor() {
+		// Check canMoveForward, canRotateRight, canRotateLeft, and update occupancy grid accordingly
+		Pose pose = opp.getPose();
+
+		float h = pose.getHeading();
+		
+		// Get estimated cell
+		int x = estimatedLocation[0], y = estimatedLocation[1];
+
+		// Check in front
+		if(h >= 45 && h < 135) {
+			// Facing right from original position
+			y++;
+			
+		} else if(h >= 135 && h < 225) {
+			// Facing back towards original position
+			x--;
+			
+		} else if(h >= 225 && h < 315) {
+			// Facing left
+			y--;
+			
+		} else {
+			// Facing forwards
+			x++;
+			
+		}
+		
+		if(!canGoForward()) {
+			gridManager.updateGridValue(x, y, 1);
+		} else {
+			gridManager.updateGridValue(x, y, 0);
+		}
+		
+		x = estimatedLocation[0];
+		y = estimatedLocation[1];
+		
+		// Check right
+		if(h >= 45 && h < 135) {
+			// Facing right from original position
+			x--;
+			
+		} else if(h >= 135 && h < 225) {
+			// Facing back towards original position
+			y--;
+			
+		} else if(h >= 225 && h < 315) {
+			// Facing left
+			x++;
+			
+		} else {
+			// Facing forwards
+			y++;
+			
+		}
+		
+		if(!canRotateRight()) {
+			gridManager.updateGridValue(x, y, 1);
+		} else {
+			gridManager.updateGridValue(x, y, 0);
+		}
+		
+		x = estimatedLocation[0];
+		y = estimatedLocation[1];
+
+		// Check left
+		if(h >= 45 && h < 135) {
+			// Facing right from original position
+			x++;
+			
+		} else if(h >= 135 && h < 225) {
+			// Facing back towards original position
+			y++;
+			
+		} else if(h >= 225 && h < 315) {
+			// Facing left
+			x--;
+			
+		} else {
+			// Facing forwards
+			y--;
+			
+		}
+		
+		if(!canRotateLeft()) {
+			gridManager.updateGridValue(x, y, 1);
+		} else {
+			gridManager.updateGridValue(x, y, 0);
+		}
+		
+		lcd.clear();
+		gridManager.updateMap();
+	}
+
+	
+
+	public static boolean canGoForward() {
+		float sensorReading = pilotRobot.getUltrasonicSensor();
+		
+		if(sensorReading < Float.POSITIVE_INFINITY) {
+			int sensorReadingInt = (int) (sensorReading * 100);
+			
+			if(sensorReadingInt <= GRID_LENGTH)
+				return false;
+		}
+		
+		return true;
+	}
+	
+	// Is there an obstacle immediately to the right?
+	public static boolean canRotateRight() {
+		float sensorReading = pilotRobot.getUltrasonicSensorRight();
+		
+		if(sensorReading < Float.POSITIVE_INFINITY) {
+			int sensorReadingInt = (int) (sensorReading * 100);
+			
+			if(sensorReadingInt <= GRID_LENGTH)
+				return false;
+		}
+		
+		return true;
+	}
+	
+	// Is there an obstacle immediately to the left?
+	public static boolean canRotateLeft() {
+		float sensorReading = pilotRobot.getUltrasonicSensorLeft();
+		
+		if(sensorReading < Float.POSITIVE_INFINITY) {
+			int sensorReadingInt = (int) (sensorReading * 100);
+			
+			if(sensorReadingInt <= GRID_LENGTH)
+				return false;
+		}
+		
+		return true;
+	}
