@@ -6,24 +6,26 @@ import lejos.hardware.lcd.GraphicsLCD;
 public class MapDrawer  {
 	private static Brick myEV3 = BrickFinder.getDefault();
 	private static GraphicsLCD lcd = myEV3.getGraphicsLCD();
-	int robotLength = 25;
-	int robotWidth = 20;
 	int r;
 	int t;
+	int cellSize = 15;
 	
 	public void initMap(int [][]map) {
 		r = 0;
 		t = 0;
-
-		for (int i = 0; i < map.length; i++) {
-			r = 0;
-			for (int j = 0; j < map[0].length; j++) {
+		
+		for (int i = 0; i < 7; i++) {
+			r = 0;		
+			for (int j = 0; j < 8; j++) {
 				
-				lcd.drawRect(j+r, i + t, robotLength, robotWidth);
+				if ((i != 0) && (j != 0) && (i != 6) && (j != 7))
+					lcd.drawRect(j+r, i + t, cellSize, cellSize);
+				else lcd.fillRect(j+r, i + t, cellSize, cellSize);
 				
-				r = r + 25;	//Set space between the rows		
+				
+				r = r + cellSize;	//Set space between the rows		
 			}	
-			t = t + 20; //Set space between the columns
+			t = t + cellSize; //Set space between the columns
 		}
 	}
 	
@@ -33,27 +35,33 @@ public class MapDrawer  {
 		t = 0;
 		
 		if (map[i][j] != 0)
-			lcd.fillRect(j+r, i + t, robotLength, 20);
+			lcd.fillRect(j+r, i + t, 20, 20);
 		else
-			lcd.drawRect(j+r, i + t, robotLength, 20);
+			lcd.drawRect(j+r, i + t, 20, 20);
 	}	
 	
 	public void printMap(int [][]map) {
 		r = 0;
 		t = 0;
 
-		for (int i = 0; i < map.length; i++) {
-			r = 0;
-			for (int j = 0; j < map[0].length; j++) {
+		for (int i = 0; i < 7; i++) {
+			r = 0;		
+			for (int j = 0; j < 8; j++) {
 				
-				if (map[i][j] != 0)
-					lcd.fillRect(j+r, i + t, robotLength, robotWidth);
-				else
-					lcd.drawRect(j+r, i + t,robotLength, robotWidth);
+				if ((i == 0) || (j == 0) || (i == 6) || (j == 7))
+					lcd.fillRect(j+r, i + t, cellSize, cellSize);
+				else {
+					if (map[i-1][j-1] != 0)  
+						lcd.fillRect(j+r, i + t, cellSize, cellSize);
+					else
+						lcd.drawRect(j+r, i + t, cellSize, cellSize);
+				}
+					
 				
-				r = r + 25;			
+				
+				r = r + cellSize;	//Set space between the rows		
 			}	
-			t = t + 20;
+			t = t + cellSize; //Set space between the columns
 		}
 	}
 }
