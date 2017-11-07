@@ -22,34 +22,53 @@ public class BehaviourNavigateObstacle implements Behavior {
 
 	// Check if the next grid tile has an obstacle in
 	public boolean takeControl(){
-		if(Assignment.nextGridContainsObstacle())
+		if(!Assignment.canGoForward())
 			return true;
 		else
 			return false;
 	}
 
-	// Perform action to navigate obstacle
+
 	public void action() {
-		// Allow this method to run
-		suppressed = false;
-		
-		// Default to turn around
-		int rotate = 180;
-		
-		// Can we rotate right?
-		if(Assignment.canRotateRight())
-			rotate = 90;
-		
-		// Can we rotate left?
-		else if(Assignment.canRotateLeft())
-			rotate = -90;
-		
-		pilotRobot.getPilot().rotate(rotate);
-		
-		while(pilotRobot.getPilot().isMoving() && !suppressed)
-			Thread.yield();
+		//G.R//
 		
 		pilotRobot.getPilot().stop();
-		
+
+		pilotRobot.getPilot().forward();
+
+		while (pilotRobot.getUltrasonicSensor() > 0.05) {		
+
+		}
+
+		pilotRobot.getPilot().backward();
+
+		while (pilotRobot.getUltrasonicSensor() < 0.05) {		
+
+		}
+
+		pilotRobot.getPilot().stop();
+
+		// Allow this method to run
+		suppressed = false;
+
+		// Default to turn around
+		int rotate = 180;
+
+		// Can we rotate right?
+		if(Assignment.canRotateRight())
+			rotate = -90;
+
+		// Can we rotate left?
+		else if(Assignment.canRotateLeft())
+			rotate = 90;
+
+		pilotRobot.getPilot().rotate(rotate);
+
+		Assignment.Align(rotate);
+
+		//G.R//
+		while(pilotRobot.getPilot().isMoving() && !suppressed)
+			Thread.yield();
+
 	}
 }

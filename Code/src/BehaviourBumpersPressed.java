@@ -22,14 +22,18 @@ public class BehaviourBumpersPressed implements Behavior {
 
 	// Check if the bumpers are pressed
 	public boolean takeControl(){
-		if(pilotRobot.isLeftBumperPressed() || pilotRobot.isRightBumperPressed())
+		if(pilotRobot.isLeftBumperPressed() || pilotRobot.isRightBumperPressed()) {
 			return true;
+		}
 		else
 			return false;
 	}
 
 	// Perform action to navigate obstacle
 	public void action() {
+		
+		pilotRobot.getPilot().stop();
+		
 		// Allow this method to run
 		suppressed = false;
 		
@@ -48,8 +52,6 @@ public class BehaviourBumpersPressed implements Behavior {
 		
 		while(pilotRobot.getPilot().isMoving() && !suppressed)
 			Thread.yield();
-		
-		pilotRobot.getPilot().stop();
 		
 	}
 }

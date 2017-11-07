@@ -87,10 +87,11 @@ public class PilotRobot {
 		
 		ultrasonicSensorSampleProvider.fetchSample(ultrasonicSensorSample, 0);
 
+		float reading = ultrasonicSensorSample[0];
 		// Rotate back to 0
 		ultrasonicSensorMotor.rotate(-90);
 		
-		return ultrasonicSensorSample[0];
+		return reading;
 	}
 	
 	// Get ultrasonic reading to the left
@@ -100,15 +101,27 @@ public class PilotRobot {
 		
 		ultrasonicSensorSampleProvider.fetchSample(ultrasonicSensorSample, 0);
 		
+		float reading = ultrasonicSensorSample[0];
 		// Rotate back to 0
 		ultrasonicSensorMotor.rotate(90);
 		
-		return ultrasonicSensorSample[0];
+		return reading;
 	}
 	
 	// Get the move pilot
 	public MovePilot getPilot() {
 		return pilot;
+	}
+
+	// Get the ultrasonic sensor motor
+	public EV3MediumRegulatedMotor getUltrasonicMotor() {
+		return ultrasonicSensorMotor;
+	}
+
+	// Get colour sensor reading
+	public int getColour() {
+		int colour = colourSensor.getColorID();
+    	return colour;
 	}
 	
 	// End the sensors
