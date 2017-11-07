@@ -30,7 +30,18 @@ public class BehaviourNavigateObstacle implements Behavior {
 
 	// Perform action to navigate obstacle
 	public void action() {
-			
+		
+		//G.R//
+		pilotRobot.getPilot().stop();
+		
+		pilotRobot.getPilot().forward();
+
+		while (pilotRobot.getUltrasonicSensor() > 0.05) {		
+		}
+		pilotRobot.getPilot().backward();
+		while (pilotRobot.getUltrasonicSensor() < 0.05) {		
+		}
+		
 		pilotRobot.getPilot().stop();
 		
 		// Allow this method to run
@@ -41,14 +52,17 @@ public class BehaviourNavigateObstacle implements Behavior {
 		
 		// Can we rotate right?
 		if(Assignment.canRotateRight())
-			rotate = -90;
+			rotate = 90;
 		
 		// Can we rotate left?
 		else if(Assignment.canRotateLeft())
-			rotate = 90;
+			rotate = -90;
 		
 		pilotRobot.getPilot().rotate(rotate);
 		
+		Assignment.Align(rotate);
+		
+		//G.R//
 		while(pilotRobot.getPilot().isMoving() && !suppressed)
 			Thread.yield();
 		

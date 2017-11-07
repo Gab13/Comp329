@@ -6,23 +6,23 @@ import lejos.hardware.lcd.GraphicsLCD;
 public class MapDrawer  {
 	private static Brick myEV3 = BrickFinder.getDefault();
 	private static GraphicsLCD lcd = myEV3.getGraphicsLCD();
-	int Height = 20;
 	int r;
 	int t;
+	int cellSize = 15;
 	
 	public void initMap(int [][]map) {
 		r = 0;
 		t = 0;
 		
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 7; i++) {
 			r = 0;		
-			for (int j = 0; j < 6; j++) {
+			for (int j = 0; j < 8; j++) {
 				
-				lcd.drawRect(j+r, i + t, 20, 20);
+				lcd.drawRect(j+r, i + t, cellSize, cellSize);
 				
-				r = r + 20;	//Set space between the rows		
+				r = r + cellSize;	//Set space between the rows		
 			}	
-			t = t + 20; //Set space between the columns
+			t = t + cellSize; //Set space between the columns
 		}
 	}
 	
@@ -41,19 +41,19 @@ public class MapDrawer  {
 		r = 0;
 		t = 0;
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 7; i++) {
 			r = 0;		
-			for (int j = 0; j < 6; j++) {
+			for (int j = 0; j < 8; j++) {
 				
-				if (map[i][j] != 0)
-					lcd.fillRect(j+r, i + t, 20, 20);
+				if (map[i][j] > 1)
+					lcd.fillRect(j+r, i + t, cellSize, cellSize);
 				else
-					lcd.drawRect(j+r, i + t, 20, 20);	
+					lcd.drawRect(j+r, i + t, cellSize, cellSize);	
 				
 				
-				r = r + 20;	//Set space between the rows		
+				r = r + cellSize;	//Set space between the rows		
 			}	
-			t = t + 20; //Set space between the columns
+			t = t + cellSize; //Set space between the columns
 		}
 	}
 }

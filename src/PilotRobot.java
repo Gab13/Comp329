@@ -67,11 +67,10 @@ public class PilotRobot {
     	rightBumperSampleProvider.fetchSample(rightBumperSample, 0);
     	return (rightBumperSample[0] == 1.0);
 	}
-	
-	// Get the colour from the colour sensor
-	public float[] getColourSensor() {
-    	colourSensorSampleProvider.fetchSample(colourSensorSample, 0);
-    	return colourSensorSample;
+
+	public int getColour() {
+		int colour = colourSensor.getColorID();
+    	return colour;
 	}
 
 	// Get ultrasonic reading
@@ -83,13 +82,13 @@ public class PilotRobot {
 	// Get ultrasonic reading to the right
 	public float getUltrasonicSensorRight() {
 		// Rotate sensor by 90
-		ultrasonicSensorMotor.rotate(90);
+		ultrasonicSensorMotor.rotate(-90);
 		
 		ultrasonicSensorSampleProvider.fetchSample(ultrasonicSensorSample, 0);
 
 		float reading = ultrasonicSensorSample[0];
 		// Rotate back to 0
-		ultrasonicSensorMotor.rotate(-90);
+		ultrasonicSensorMotor.rotate(90);
 		
 		return reading;
 	}
@@ -97,13 +96,13 @@ public class PilotRobot {
 	// Get ultrasonic reading to the left
 	public float getUltrasonicSensorLeft() {
 		// Rotate sensor by -90
-		ultrasonicSensorMotor.rotate(-90);
+		ultrasonicSensorMotor.rotate(90);
 		
 		ultrasonicSensorSampleProvider.fetchSample(ultrasonicSensorSample, 0);
 		
 		float reading = ultrasonicSensorSample[0];
 		// Rotate back to 0
-		ultrasonicSensorMotor.rotate(90);
+		ultrasonicSensorMotor.rotate(-90);
 		
 		return reading;
 	}
@@ -111,6 +110,9 @@ public class PilotRobot {
 	// Get the move pilot
 	public MovePilot getPilot() {
 		return pilot;
+	}
+	public EV3MediumRegulatedMotor getUltrasonicMotor() {
+		return ultrasonicSensorMotor;
 	}
 	
 	// End the sensors
