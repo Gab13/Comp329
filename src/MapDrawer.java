@@ -18,7 +18,10 @@ public class MapDrawer  {
 			r = 0;		
 			for (int j = 0; j < 8; j++) {
 				
-				lcd.drawRect(j+r, i + t, cellSize, cellSize);
+				if ((i != 0) && (j != 0) && (i != 6) && (j != 7))
+					lcd.drawRect(j+r, i + t, cellSize, cellSize);
+				else lcd.fillRect(j+r, i + t, cellSize, cellSize);
+				
 				
 				r = r + cellSize;	//Set space between the rows		
 			}	
@@ -45,10 +48,15 @@ public class MapDrawer  {
 			r = 0;		
 			for (int j = 0; j < 8; j++) {
 				
-				if (map[i][j] > 1)
+				if ((i == 0) || (j == 0) || (i == 6) || (j == 7))
 					lcd.fillRect(j+r, i + t, cellSize, cellSize);
-				else
-					lcd.drawRect(j+r, i + t, cellSize, cellSize);	
+				else {
+					if (map[i-1][j-1] != 0)
+						lcd.fillRect(j+r, i + t, cellSize, cellSize);
+					else
+						lcd.drawRect(j+r, i + t, cellSize, cellSize);
+				}
+					
 				
 				
 				r = r + cellSize;	//Set space between the rows		
