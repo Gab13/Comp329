@@ -23,7 +23,7 @@ import java.lang.Math;
 
 public class Assignment {
 	private static final int DIMENSION_X = 175, DIMENSION_Y = 210; // X and Y dimensions of the arena in cm
-	public static final int GRID_LENGTH = 35, GRID_WIDTH = 35; // Length and width of the robot in cm
+	public static final int TILE_LENGTH = 35, TILE_WIDTH = 35; // Length and width of the robot in cm
 	private static int xGridCount, yGridCount;
 	
 	private static OccupancyGridManager gridManager;
@@ -44,9 +44,9 @@ public class Assignment {
 	
 	public static void main(String[] args) {
 		// Get grid size for occupancy grid + grid counter
-		xGridCount = (DIMENSION_X / GRID_LENGTH) + 2; //To include walls
+		xGridCount = DIMENSION_X / TILE_LENGTH; //To include walls
 		//yGridCount = DIMENSION_Y / ROBOT_WIDTH;
-		yGridCount = (DIMENSION_Y / GRID_WIDTH) + 2;
+		yGridCount = DIMENSION_Y / TILE_WIDTH;
 		
 		// Initialise grid manager
 		gridManager = new OccupancyGridManager(xGridCount, yGridCount);
@@ -95,78 +95,6 @@ public class Assignment {
 		// Start arbitrator
 		arbitrator.go();
 		
-		
-		/*
-		String row;
-		int gridVal;
-		
-		// Check ultrasound
-		while(true) {
-			Button.waitForAnyPress();
-			
-			if(Button.ESCAPE.isDown())
-				break;
-		
-			float sensorReading = pilotRobot.getUltrasonicSensor();
-			
-			// Convert sensor reading to int
-			if(sensorReading < Float.POSITIVE_INFINITY) {
-				int sensorReadingInt = (int) (sensorReading * 100);
-				int gridCell = sensorReadingInt / ROBOT_LENGTH;
-				//gridCell--;
-				
-				try {
-					dOut.writeUTF("Detected obstacle at distance " + sensorReadingInt + "cm in cell (" + gridCell + ", 0)");
-					dOut.flush();
-				} catch(Exception e) {
-					
-				}
-				
-				if(gridCell >= 0 && gridCell < xGridCount) {
-					gridManager.updateGridValue(gridCell, 0, 1);
-				}
-				
-				lcd.clear();
-				for(int i = 0; i < xGridCount; i++) {
-					row = "";
-					
-					for(int j = 0; j < yGridCount; j++) {
-						gridVal = gridManager.getGridValue(i, j);
-						row += " " + gridVal;
-					}
-					
-					lcd.drawString(row, 0, ((yGridCount - i) * 10), 0);
-				}
-			}
-		}
-
-		lcd.clear();
-		for(int i = 0; i < xGridCount; i++) {
-			row = "";
-			
-			for(int j = 0; j < yGridCount; j++) {
-				if(gridManager.getGridCounterValue(i, j) > 0)
-					gridVal = gridManager.getGridValue(i, j) / gridManager.getGridCounterValue(i, j);
-				else
-					gridVal = -1;
-				
-				row += " " + gridVal;
-			}
-			
-			lcd.drawString(row, 0, ((yGridCount - i) * 10), 0);
-		}
-		
-		nextGridContainsObstacle();
-		
-		Button.waitForAnyPress();
-		
-		try {
-			dOut.writeUTF("Finished");
-			server.close();
-		} catch(Exception e) {
-			
-		}
-		*/
 	}
 	
 	// Print a message
@@ -177,44 +105,6 @@ public class Assignment {
 		} catch(Exception e) {
 			
 		}
-	}
-	
-	// Does the next grid cell contain an obstacle?
-	public static boolean nextGridContainsObstacle() {
-		// Get current grid value based on pose
-		Pose pose = opp.getPose();
-		
-		float x = pose.getX();
-		float y = pose.getY();
-		float h = pose.getHeading();
-		
-		int posX = (int) (x / GRID_LENGTH);
-		int posY = (int) (y / GRID_LENGTH);
-		
-		if(h >= 45 && h < 135) {
-			// Facing right from original position
-			posY++;
-		} else if(h >= 135 && h < 225) {
-			// Facing back towards original position
-			posX--;
-		} else if(h >= 225 && h < 315) {
-			// Facing left
-			posY--;
-		} else {
-			// Facing forwards
-			posX++;
-		}
-		
-		if(gridManager.getGridValue(posX,  posY) > 0) {
-			try {
-				dOut.writeUTF("Obstacle in " + posX + ", " + posY + " detected!");
-			} catch(Exception e) {
-				
-			}
-			return true;
-		}
-
-		return false;
 	}
 	
 	// Scan with ultrasound sensor
@@ -231,11 +121,11 @@ public class Assignment {
 				float y = pose.getY();
 				float h = pose.getHeading();
 				
-				int posX = (int) (x / GRID_LENGTH);
-				int posY = (int) (y / GRID_WIDTH);
+				int posX = (int) (x / TILE_LENGTH);
+				int posY = (int) (y / TILE_WIDTH);
 				
 				int sensorReadingInt = (int) (sensorReading * 100);
-				int sensorReadingCell = sensorReadingInt / GRID_LENGTH; // Get number of cells away from robot obstacle has been detected in
+				int sensorReadingCell = sensorReadingInt / TILE_LENGTH; // Get number of cells away from robot obstacle has been detected in
 
 				if(h >= 45 && h < 135) {
 					// Facing right from original position
@@ -252,7 +142,8 @@ public class Assignment {
 				}
 
 				if(posX >= 0 && posY >= 0 && posX < xGridCount && posY < yGridCount) {
-					gridManager.updateGridValue(posX + 1, posY + 1, 1);
+					gridManager.updateGridValue(posX, posY, 1);
+					
 				} //System.out.println(posX +""+ posY);
 				
 				lcd.clear();
@@ -267,9 +158,9 @@ public class Assignment {
 					//lcd.drawString(row, 0, ((yGridCount - i) * 10), 0);
 				}
 			} lcd.clear();
-			//gridManager.updateMap();
-			System.out.println("");
-			gridManager.printgrid();
+			gridManager.updateMap();
+			//System.out.println("");
+			//gridManager.printgrid();
 		}
 	
 		
@@ -280,7 +171,7 @@ public class Assignment {
 			if(distanceFromObject < Float.POSITIVE_INFINITY) {
 				int sensorReadingInt = (int) (distanceFromObject * 100);
 				
-				if(sensorReadingInt<= GRID_LENGTH)
+				if(sensorReadingInt<= TILE_LENGTH)
 					return false;
 			}
 			
@@ -294,7 +185,7 @@ public class Assignment {
 		if(sensorReading < Float.POSITIVE_INFINITY) {
 			int sensorReadingInt = (int) (sensorReading * 100);
 			
-			if(sensorReadingInt <= GRID_LENGTH)
+			if(sensorReadingInt <= TILE_LENGTH)
 				return false;
 		}
 		
@@ -308,7 +199,7 @@ public class Assignment {
 		if(sensorReading < Float.POSITIVE_INFINITY) {
 			int sensorReadingInt = (int) (sensorReading * 100);
 			
-			if(sensorReadingInt <= GRID_LENGTH)
+			if(sensorReadingInt <= TILE_LENGTH)
 				return false;
 		}
 		
